@@ -10,6 +10,7 @@ import Select from '@mui/material/Select';
 
 export default function Form() {
   const [selectedNodeKey, setSelectedNodeKey] = useState('type of business');
+  const [docUrl, setDocUrl] = useState(null);
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       name: '',
@@ -52,18 +53,18 @@ export default function Form() {
     try {
       console.log(details)
       const response = await fetch('http://localhost:3001/getCharacterizationFile', {
-        method:'POST',
+        method: 'POST',
         body: JSON.stringify(details),
         headers: {
           'Content-Type': 'application/pdf'
         }
       });
-console.log(response);
-     // const data = await response;
-     // console.log(data.file.data)
-      // const blob = new Blob([exportText], { type: 'text/plain' });
-      // blobToSaveAs("myFile",blob)
-      const pdfBlob = new Blob([data.file.data], { type: 'application/pdf' });
+      const data = await response.data;
+      console.log(response)
+     // const bytes = new Uint8Array(data.file);
+      const pdfBlob = new Blob([data], { type: 'application/pdf' });
+      const docUrl = URL.createObjectURL(pdfBlob);
+      setDocUrl(docUrl);
       //להורדה מידית
       saveAs(pdfBlob, 'generatedDocument.pdf')
       //ליצירת קישור להורדה
@@ -136,6 +137,7 @@ console.log(response);
         rows={7}
         {...register("about")} />
     </div>
-<button type='submit'>SEND</button>
+    <button type='submit'>SEND</button>
+    <iframe src={docUrl} type="application/pdf" />
   </form>)
 }

@@ -3,12 +3,12 @@ import dotenv from 'dotenv'
 dotenv.config()
 import fs from "fs";
 import readline from 'readline';
-import {PDFDocument} from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
 
 
 // Make sure to include these imports:
 // import { GoogleGenerativeAI } from "@google/generative-ai";
-export async function targil1(req,res) {
+export async function targil1(req, res) {
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -29,9 +29,9 @@ export async function targil1(req,res) {
 
     // Convert to bytes and send as response
     const pdfBytes = await pdfDoc.save();
-     res.setHeader("Content-Type", "application/pdf");
-     res.setHeader("Content-Disposition", "attachment; filename=CoverLetter.pdf");
-     return res.send({data:Buffer.from(pdfBytes)});
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=CoverLetter.pdf");
+    return res.send({ data: Buffer.from(pdfBytes) });
 
 
 }
