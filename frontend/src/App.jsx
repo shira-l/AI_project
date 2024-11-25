@@ -10,7 +10,8 @@ function App() {
   return (
     <>
      <Form/>
-     
+     <button>DOWNLOAD PDF</button>
+     <button>create website home page for your business</button>
     </>
   )
 }

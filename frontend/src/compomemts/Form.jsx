@@ -7,6 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
+import download from "downloadjs";
 
 export default function Form() {
   const [selectedNodeKey, setSelectedNodeKey] = useState('type of business');
@@ -56,19 +57,13 @@ export default function Form() {
         method: 'POST',
         body: JSON.stringify(details),
         headers: {
-          'Content-Type': 'application/pdf'
+          'Content-Type': 'application/json'
         }
       });
-      const data = await response.data;
+      // const data = await response.data;
+      const blob = await response.blob();
       console.log(response)
-     // const bytes = new Uint8Array(data.file);
-      const pdfBlob = new Blob([data], { type: 'application/pdf' });
-      const docUrl = URL.createObjectURL(pdfBlob);
-      setDocUrl(docUrl);
-      //להורדה מידית
-      saveAs(pdfBlob, 'generatedDocument.pdf')
-      //ליצירת קישור להורדה
-      // blobToSaveAs("generatedDocument.pdf", pdfBlob)
+      download(blob, "test.pdf");
 
       if (!response.ok) {
         throw new Error(data.error);
@@ -138,6 +133,5 @@ export default function Form() {
         {...register("about")} />
     </div>
     <button type='submit'>SEND</button>
-    <iframe src={docUrl} type="application/pdf" />
   </form>)
 }
