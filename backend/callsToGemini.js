@@ -98,18 +98,28 @@ async function targil4() {
         history: [
             {
                 role: "user",
-                parts: [{ text: "Hello" }],
+                parts: [{ text: "I want to open a new business. "+
+                    "I want to give you category, my business idea, the purpose of the business and a description "+
+                    "and I want you to return to me a list of what I need to do in order to open that business. "+
+                    "I want you to gives specific suggestions based on the information I give you "+
+                    "(not just generic ideas of how to open a business) Can you do this? "+
+                    "Let me know if this is something you can do and then I will input the information about the company and you give me the plans. "+
+                    "Ok?" }],
             },
             {
                 role: "model",
-                parts: [{ text: "Great to meet you. What would you like to know?" }],
+                parts: [{ text: "Obsalutly! no problam. send me the details." }],
             },
         ],
     });
-    let result = await chat.sendMessage("I have 2 dogs in my house. Do you have dogs?");
+    let result = await chat.sendMessage("Thank you, here is the information:"+
+        "Name: Jane Doe"+
+        "Category: Real estate agent"+
+        "Purpose: I want to sell properties that are in bad condition and sell at a low price to people who will fix them up and sell them for high"+
+        "Description: I will work in the state of Oregon, and want to attract home designers to buy inexpensive properties that they will fix up and then resell");
     console.log(result.response.text());
-    result = await chat.sendMessage("How many paws are in my house?");
-    console.log(result.response.text());
+    // result = await chat.sendMessage("How many paws are in my house?");
+    // console.log(result.response.text());
 }
 //targil4();
 
