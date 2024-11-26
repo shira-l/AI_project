@@ -1,5 +1,6 @@
 import { saveAs } from 'file-saver';
 import { useForm } from "react-hook-form";
+import WebCreation from './WebCreation';
 import TextField from '@mui/material/TextField';
 import React, { useState } from 'react';
 import FormControl from '@mui/material/FormControl';
@@ -9,9 +10,12 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
 import download from "downloadjs";
 
-export default function Form(props) {
+export default function Form() {
   const [selectedNodeKey, setSelectedNodeKey] = useState('type of business');
-  const { setDisplayForm } = props;
+  const [displayButtons, setDisplayButtons] = useState(false)
+  const [displayWebCreation, setDisplayWebCreation] = useState(false);
+  const [businessDetails, setBusinessDetails] = useState({});
+  const [blob, setBlob] = useState(null)
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       name: '',
@@ -49,19 +53,18 @@ export default function Form(props) {
   // }
   const generateCharacterizationFile = async (details) => {
     try {
-      console.log(details)
-      const response = await fetch('http://localhost:3001/getCharacterizationFile', {
+      setBusinessDetails(details)
+      const response = await fetch('http://localhost:3001/createCharacterizationFile', {
         method: 'POST',
         body: JSON.stringify(details),
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      // const data = await response.data;
-      const blob = await response.blob();
-      console.log(response);
-     // download(blob, "test.pdf");
-      setDisplayForm(true);
+
+      const pdfBlob = await response.blob();
+      setBlob(pdfBlob);
+      setDisplayButtons(true);
       if (!response.ok) {
         throw new Error(data.error);
       }
@@ -130,5 +133,10 @@ export default function Form(props) {
         {...register("about")} />
     </div>
     <button type='submit'>SEND</button>
+    {displayButtons && <div>
+      <button onClick={() => download(blob, "SpecificationFile.pdf")}>download PDF</button>
+      <button onClick={() => { setDisplayWebCreation(!displayWebCreation) }}>create website home page for your business</button>
+    </div>}
+    {displayWebCreation && <WebCreation businessDetails={businessDetails} />}
   </form>)
 }
