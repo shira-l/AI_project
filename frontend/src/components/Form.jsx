@@ -63,6 +63,8 @@ export default function Form() {
       });
 
       const pdfBlob = await response.blob();
+      console.log("pdfBlob")
+      console.log(pdfBlob)
       setBlob(pdfBlob);
       setDisplayButtons(true);
       if (!response.ok) {
@@ -134,9 +136,33 @@ export default function Form() {
     </div>
     <button type='submit'>SEND</button>
     {displayButtons && <div>
+      {console.log("Blob")}
+      {console.log(blob)}
       <button onClick={() => download(blob, "SpecificationFile.pdf")}>download PDF</button>
       <button onClick={() => { setDisplayWebCreation(!displayWebCreation) }}>create website home page for your business</button>
     </div>}
     {displayWebCreation && <WebCreation businessDetails={businessDetails} />}
   </form>)
-}
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
