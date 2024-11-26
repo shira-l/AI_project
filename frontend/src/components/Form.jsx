@@ -37,20 +37,7 @@ export default function Form() {
     "Delivery",
     "Startup"
   ]
-  // function blobToSaveAs(fileName, blob) {
-  //   try {
-  //     const url = window.URL.createObjectURL(blob);
-  //     const link = document.createElement('a');
-  //     if (link.download !== undefined) { // feature detection
-  //       link.setAttribute('href', url);
-  //       link.textContent = "for dowload";
-  //       link.setAttribute('download', fileName);
-  //       document.body.appendChild(link);
-  //     }
-  //   } catch (e) {
-  //     console.error('BlobToSaveAs error', e);
-  //   }
-  // }
+ 
   const generateCharacterizationFile = async (details) => {
     try {
       setBusinessDetails(details)
@@ -63,15 +50,13 @@ export default function Form() {
       });
 
       const pdfBlob = await response.blob();
-      console.log("pdfBlob")
-      console.log(pdfBlob)
       setBlob(pdfBlob);
       setDisplayButtons(true);
       if (!response.ok) {
-        throw new Error(data.error);
+        console.error(response.error);
       }
     } catch (error) {
-      throw error;
+      console.error(error);
     };
   }
 
@@ -136,14 +121,12 @@ export default function Form() {
     </div>
     <button type='submit'>SEND</button>
     {displayButtons && <div>
-      {console.log("Blob")}
-      {console.log(blob)}
       <button onClick={() => download(blob, "SpecificationFile.pdf")}>download PDF</button>
       <button onClick={() => { setDisplayWebCreation(!displayWebCreation) }}>create website home page for your business</button>
     </div>}
     {displayWebCreation && <WebCreation businessDetails={businessDetails} />}
   </form>)
- }
+}
 
 
 

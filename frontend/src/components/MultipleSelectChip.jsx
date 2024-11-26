@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -7,7 +7,6 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-
 
 
 const ITEM_HEIGHT = 48;
@@ -21,17 +20,17 @@ const MenuProps = {
     },
 };
 
-const options = [
+const sections = [
+    "Header",
     "Logo",
-    "Footer",
-    "Social proof",
-    "Powerful calls to action",
-    "Contact information",
     "Navigation",
+    "About",
     "Content",
+    "Powerful calls to action",
     "Benefits",
-    "header",
-    "about",
+    "Contact information",
+    "Social proof",
+    "Footer"
 ];
 const colors = [
     { color: "grey", value: "#A9A9A9" },
@@ -57,30 +56,18 @@ function getStyles(option, selectedOptions, theme) {
 }
 
 export default function MultipleSelectChip(props) {
-    const { type } = props
+    const { type, handleChange, selectedOptions } = props
     const theme = useTheme();
-    const [selectedOptions, setSelectedOptions] = useState([]);
-    const label = type == "options" ? "Components" : "Colors";
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setSelectedOptions(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
-
     return (
         <div>
             <FormControl sx={{ m: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-chip-label">{label}</InputLabel>
+                <InputLabel id="demo-multiple-chip-label">{type}</InputLabel>
                 <Select
-                       labelId="demo-simple-select-required-label"
+                    labelId="demo-simple-select-required-label"
                     id="demo-simple-select-required"
                     multiple
                     value={selectedOptions}
-                    label={label}
+                    label={type}
                     onChange={handleChange}
                     input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
                     renderValue={(selected) => (
@@ -92,7 +79,7 @@ export default function MultipleSelectChip(props) {
                     )}
                     MenuProps={MenuProps}
                 >
-                    {type == "options" ? options.map((option) => (
+                    {type == "Sections" ? sections.map((option) => (
                         <MenuItem
                             key={option}
                             value={option}
@@ -106,7 +93,6 @@ export default function MultipleSelectChip(props) {
                             key={option.color}
                             value={option.color}
                             style={{ ...getStyles(option.color, selectedOptions, theme), backgroundColor: option.value, opacity: 0.9 }}
-
                         >
                             {option.color}
                         </MenuItem>
