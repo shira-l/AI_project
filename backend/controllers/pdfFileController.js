@@ -16,12 +16,16 @@ export async function createCharacterizationFile(req, res) {
           parts: [{
             text: "I want to open a new business. " +
               "I want to give you category, my business idea, the purpose of the business and a description, " +
-              "and I want you to return to me a Business characterization document. Ok?"
+              "and I want you to return to me a Business characterization document." +
+              "Return me the document in a json format, " +
+              "One key should be the title, then sub-title then content, and then the next sub-title and content ext." +
+              "The json should have also a key of name- that you offer, and shouldnt include a logo." +
+              "Manage with the information I give you dont ask questions and dont send eny thing else exept for the json. Ok?"
           }],
         },
         {
           role: "model",
-          parts: [{ text: "Absolutely! no problem. Send me the information  without '*' characters." }],
+          parts: [{ text: "Absolutely! No problem. Just send me information." }],
         },
       ],
     });
@@ -37,7 +41,7 @@ export async function createCharacterizationFile(req, res) {
 
     // קבלת טקסט ותוכן לוגו
     const characterizationText = resText.response.text();
-    const resLogo = await chat.sendMessage("Can you give me a logo for my company in url format?");
+    const resLogo = await chat.sendMessage("Give me a logo for my company in a img format.");
     const logoText = resLogo.response.text();
 
     // יצירת מסמך PDF
