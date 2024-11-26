@@ -9,9 +9,9 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
 import download from "downloadjs";
 
-export default function Form() {
+export default function Form(props) {
   const [selectedNodeKey, setSelectedNodeKey] = useState('type of business');
-  const [docUrl, setDocUrl] = useState(null);
+  const { setDisplayForm } = props;
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       name: '',
@@ -25,16 +25,13 @@ export default function Form() {
 
 
 
-
-
-
   const optionsOfCompaniesTypes = [
-    { value: "Restaurant/Catering", label: "Restaurant/Catering" },
-    { value: "Store", label: "Store" },
-    { value: "Guesthouse", label: "Guesthouse" },
-    { value: "Real Estate Company", label: "Real Estate Company" },
-    { value: "Delivery", label: "Delivery" },
-    { value: "Startup", label: "Startup" },
+    "Restaurant/Catering",
+    "Store",
+    "Guesthouse",
+    "Real Estate Company",
+    "Delivery",
+    "Startup"
   ]
   // function blobToSaveAs(fileName, blob) {
   //   try {
@@ -62,17 +59,17 @@ export default function Form() {
       });
       // const data = await response.data;
       const blob = await response.blob();
-      console.log(response)
-      download(blob, "test.pdf");
-
+      console.log(response);
+     // download(blob, "test.pdf");
+      setDisplayForm(true);
       if (!response.ok) {
         throw new Error(data.error);
       }
-      return data;
     } catch (error) {
       throw error;
     };
   }
+
   return (<form onSubmit={handleSubmit(generateCharacterizationFile)}>
 
     <FormControl sx={{ m: 1, width: '22ch' }} variant="standard">
@@ -114,7 +111,7 @@ export default function Form() {
         <MenuItem value="">
           <em>{selectedNodeKey}</em>
         </MenuItem>
-        {optionsOfCompaniesTypes.map((el, i) => (<MenuItem key={i} value={Object.values(el)[0]}>{Object.values(el)[1]}
+        {optionsOfCompaniesTypes.map((el, i) => (<MenuItem key={i} value={el}>{el}
         </MenuItem>))}
       </Select>
       <FormHelperText>{errors[selectedNodeKey] ? errors[selectedNodeKey].message : ''}</FormHelperText>

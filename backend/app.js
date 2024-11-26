@@ -27,15 +27,32 @@ app.post('/getCharacterizationFile', async (req, res) => {
     const businessDetails = req.body;
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    console.log(businessDetails)
-    //const prompt = "add a logo. can you give me a file explaning what company does, \n a ibt aboute my company: my company does coaching for business managers to help them elevate their business \n we have the best coaches that give each manager personal time and each one gets guidenss in his own way \n offer a name for our company and atach a logo";
-    const prompt = `add a logo. can you give me a file explaning what company does,
-     \n a ibt aboute my company: ${businessDetails.descreption} \n
-      ${businessDetails.purpose} \n 
-      offer a name for our company and atach a logo`;
+    const chat = model.startChat({
+        history: [
+            {
+                role: "user",
+                parts: [{
+                    text: "I want to open a new business. " +
+                        "I want to give you category, my business idea, the purpose of the business and a description " +
+                        "and I want you to return to me a Business characterization document for. Ok?"
+                }],
+            },
+            {
+                role: "model",
+                parts: [{ text: "Absolutely! no problem. send me the information." }],
+            },
+        ],
+    });
+    console.log(businessDetails);
+    let resText = await chat.sendMessage(`my business information: name: ${businessDetails.name}
+         email: ${businessDetails.email} companyType: ${businessDetails.companyType} description:
+     ${businessDetails.description} purpose: ${businessDetails.purpose} aboute: ${businessDetails.aboute}.`);
+    console.log(resText.response.text());
+    let resLogo = await chat.sendMessage('can you give me a logo for my company');
+    console.log(resLogo.response.text());
+    const result = { 'text': `${resText.response.text()}`, 'logo': `${resLogo.response.text()}` }
 
-    const result = await model.generateContent(prompt);
-    console.log(result.response.text());
+
     //1
     // Here we need to take result.response.text() and export it to pdf
     //     const pdfDoc = await PDFDocument.create();
@@ -63,8 +80,7 @@ app.post('/getCharacterizationFile', async (req, res) => {
 
     // Create a document
     const doc = new PDFDocument();
-    const text =result.response.text().toString();
-    // Saving the pdf file in root directory.
+ //   const text = result.response.text().toString();
     doc.pipe(fs.createWriteStream('example.pdf'));
 
     // Adding functionality
@@ -83,7 +99,7 @@ app.post('/getCharacterizationFile', async (req, res) => {
     doc
         .addPage()
         .fontSize(15)
-        .text(text);
+        .text(result.text, 100, 100);
 
 
 
@@ -106,4 +122,38 @@ app.post('/getCharacterizationFile', async (req, res) => {
     // Finalize PDF file
     doc.end();
     return res.download('example.pdf');
+})
+app.post('/getWebPage', async (req, res) => {
+    const designDetails = req.body;
+    const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const chat = model.startChat({
+        history: [
+            {
+                role: "user",
+                parts: [{
+                    text: "I want to create a promotional webpage based on the information I am providing below. " +
+                        "You must return to me the HTML and CSS code. " +
+                        "give me it in a json format, the entry keys should be 'html' and 'css', and the values should be code in a string format"+
+                        "The website should be very visually appealing and show should be a promotional website that has strong marketing language and convinces the website visitor to use our service."
+                        // "Include the following ,making sure everything is customized to the details I am providing below:" +
+                        // "A company name that you think goes well with the business" +
+                        // "A tagline written in italics underneath the company name" +
+                        // "A paragraph describing the business" +
+                        // "A bulleted list of reasons why you should use our service" +
+                        // "CTA that is specific to that business." +
+                        // "Contact information"
+                }],
+            },
+            {
+                role: "model",
+                parts: [{ text: "Absolutely! no problem. send me the information." }],
+            },
+        ],
+    });
+    console.log(designDetails);
+    let result = await chat.sendMessage(`my business information: name: ${businessDetails.name} email: ${businessDetails.email} companyType: ${businessDetails.companyType} description: ${businessDetails.description} purpose: ${businessDetails.purpose} aboute: ${businessDetails.aboute}.`);
+    console.log(result.response.text());
+
 })
