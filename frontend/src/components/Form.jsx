@@ -1,4 +1,4 @@
-import { saveAs } from 'file-saver';
+
 import { useForm } from "react-hook-form";
 import WebCreation from './WebCreation';
 import TextField from '@mui/material/TextField';
@@ -10,11 +10,13 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
 import download from "downloadjs";
 
+
 export default function Form() {
   const [selectedNodeKey, setSelectedNodeKey] = useState('type of business');
   const [displayButtons, setDisplayButtons] = useState(false)
   const [displayWebCreation, setDisplayWebCreation] = useState(false);
   const [businessDetails, setBusinessDetails] = useState({});
+  const [isLoad, setIsLoad] = useState(false)
   const [blob, setBlob] = useState(null)
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
@@ -37,9 +39,10 @@ export default function Form() {
     "Delivery",
     "Startup"
   ]
- 
+
   const generateCharacterizationFile = async (details) => {
     try {
+      setIsLoad(true)
       setBusinessDetails(details)
       const response = await fetch('http://localhost:3001/createCharacterizationFile', {
         method: 'POST',
@@ -51,6 +54,7 @@ export default function Form() {
 
       const pdfBlob = await response.blob();
       setBlob(pdfBlob);
+      setIsLoad(false)
       setDisplayButtons(true);
       if (!response.ok) {
         console.error(response.error);
@@ -68,7 +72,7 @@ export default function Form() {
         {...register("name", {
           required: "Please enter your name.",
           pattern: {
-            value: /^[a-z\u0590-\u05fe]+$/i,
+            value: /^[a-zA-Z ]*$/,
             message: "Please enter only alphabetic characters."
           }
         })}
@@ -119,7 +123,7 @@ export default function Form() {
         rows={7}
         {...register("about")} />
     </div>
-    <button type='submit'>SEND</button>
+    {isLoad ? <span>Loading...</span> : <button type='submit'>Send</button>}
     {displayButtons && <div>
       <button onClick={() => download(blob, "SpecificationFile.pdf")}>download PDF</button>
       <button onClick={() => { setDisplayWebCreation(!displayWebCreation) }}>create website home page for your business</button>

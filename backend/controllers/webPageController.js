@@ -69,6 +69,7 @@ export async function getWebPage(req, res) {
     console.log(designDetails);
     let result = await chat.sendMessage(`my business information: name: ${designDetails.name} email: ${designDetails.email} companyType: ${designDetails.companyType} description: ${designDetails.description} purpose: ${designDetails.purpose} about: ${designDetails.about}.`);
     console.log(result.response.text());
+    const doc = new DOMParser().parseFromString(result.response.text(), "text/xml");
 
 }
 

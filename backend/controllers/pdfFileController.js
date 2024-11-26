@@ -37,7 +37,7 @@ export async function createCharacterizationFile(req, res) {
 
     // קבלת טקסט ותוכן לוגו
     const characterizationText = resText.response.text();
-    const resLogo = await chat.sendMessage("Can you give me a logo for my company?");
+    const resLogo = await chat.sendMessage("Can you give me a logo for my company in url format?");
     const logoText = resLogo.response.text();
 
     // יצירת מסמך PDF
@@ -53,11 +53,6 @@ export async function createCharacterizationFile(req, res) {
       .moveDown()
       .fontSize(12)
       .text(characterizationText, { align: 'left' })
-      .moveDown()
-      .text('Logo Suggestion:', { align: 'left' })
-      .fontSize(10)
-      .text(logoText, { align: 'left' });
-
     doc.end();
 
     // שליחת המסמך ללקוח
