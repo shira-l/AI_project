@@ -38,11 +38,13 @@ export async function createCharacterizationFile(req, res) {
       Description: ${businessDetails.description}, 
       Purpose: ${businessDetails.purpose}, 
       About: ${businessDetails.about}.`);
+     
 
     // קבלת טקסט ותוכן לוגו
     const characterizationText = resText.response.text();
+    const objectString=
+    console.log(characterizationText)
     const resLogo = await chat.sendMessage("Give me a logo for my company in a img format.");
-    const logoText = resLogo.response.text();
 
     // יצירת מסמך PDF
     const doc = new PDFDocument();
@@ -53,10 +55,12 @@ export async function createCharacterizationFile(req, res) {
     // כתיבת תוכן למסמך PDF
     doc
       .fontSize(20)
-      .text('Business Characterization Document', { align: 'center' })
+      .text('Business Characterization Document', { align: 'center',underline:true, })
       .moveDown()
+      .fontSize(20)
+      .text('Business Characterization Document', { align: 'center' })
       .fontSize(12)
-      .text(characterizationText, { align: 'left' })
+      .text(characterizationText.name, { align: 'left' })
     doc.end();
 
     // שליחת המסמך ללקוח

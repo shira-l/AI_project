@@ -47,11 +47,8 @@ export default function WebCreation(props) {
             <MultipleSelectChip type={"Colors"} handleChange={handleChangeColors} selectedOptions={selectedColors} />
         </div>
         <button onClick={creatWebPage}>Create</button>
-        <button
-            href="http://localhost:3001/landingPage.html"
-            target="_blank"
-        >
-            Preview
-        </button>
+       <button><a href="http://localhost:3001/landingPage.html"
+            target="_blank"> Preview </a></button>
+       
     </>)
 }
