@@ -1,6 +1,13 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from 'fs'
 export async function getWebPage(req, res) {
+    //     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+    //     const url = 'https://markerapi.com/api/v2/trademarks/trademark/bamba/status/active/start/1/username/Test123/password/MWJm4rTdCp';
+    //     const agent = new https.Agent({ rejectUnauthorized: false })
+    //     setGlobalDispatcher(new Agent({ connect: { timeout: 60_000 } }))
+    //     const response = await fetch(url, { agent });
+    //     const jsonResponse = await response.json();
+    //     console.log(jsonResponse);
     const designDetails = req.body;
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -23,7 +30,7 @@ export async function getWebPage(req, res) {
                     text: "I want to create a promotional webpage based on the information I'll provide. " +
                         "You must return to me the HTML code in string format. " +
                         "give me only code! nothing else!" +
-                        `The website should be in this Hex color code: ${designDetails.colors.map((color) => color)} colors. `+
+                        `The website should be in this Hex color code: ${designDetails.colors.map((color) => color)} colors. ` +
                         "The website should be very visually appealing,prestigious and innovative,and show should be a promotional website that has strong marketing language and convinces the website visitor to use our service." +
                         "Include the following ,making sure everything is customized to the details I am provide:" +
 
@@ -49,7 +56,7 @@ export async function getWebPage(req, res) {
                                 case 'Footer':
                                     return footer;
                             }
-                        })} `+
+                        })} ` +
                         "I'll provide you the relevant information. Ok? "
                 }],
             },
@@ -59,17 +66,17 @@ export async function getWebPage(req, res) {
             },
         ],
     });
-    console.log(designDetails);
-    let htmlResult = await chat.sendMessage(`my business information: name: ${designDetails.name} email: ${designDetails.email} companyType: ${designDetails.companyType} description: ${designDetails.description} purpose: ${designDetails.purpose} about: ${designDetails.about}.`);
-    console.log(htmlResult.response.text());
-
-    // let cssResult = await chat.sendMessage('can you give me css code for the style of my website?' +
-    //     `The website should be in this Hex color code: ${designDetails.colors.map((color) => color)} colors. ` +
-    //     'make sure to include only css and nothing else'
-    // );
-    //console.log(cssResult.response.text());
-   
-    fs.writeFileSync('C:/Users/The user/AI_project/backend/html/landingPage.html',htmlResult.response.text());
+    let htmlResult = await chat.sendMessage(`my business information:
+        name: ${designDetails.name}
+        email: ${designDetails.email}
+        companyType: ${designDetails.companyType}
+        description: ${designDetails.description}
+        purpose: ${designDetails.purpose}
+        about: ${designDetails.about}.`);
+    let htmlText = htmlResult.response.text();
+    let html = htmlText.slice(htmlText.indexOf("html") + 4, -4);
+    console.log(html);
+    fs.writeFileSync('C:/Users/The user/AI_project/backend/html/landingPage.html', html);
 }
 
 
