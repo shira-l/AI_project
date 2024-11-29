@@ -1,6 +1,13 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from 'fs'
 export async function getWebPage(req, res) {
+    //     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+    //     const url = 'https://markerapi.com/api/v2/trademarks/trademark/bamba/status/active/start/1/username/Test123/password/MWJm4rTdCp';
+    //     const agent = new https.Agent({ rejectUnauthorized: false })
+    //     setGlobalDispatcher(new Agent({ connect: { timeout: 60_000 } }))
+    //     const response = await fetch(url, { agent });
+    //     const jsonResponse = await response.json();
+    //     console.log(jsonResponse);
     const designDetails = req.body;
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -23,8 +30,12 @@ export async function getWebPage(req, res) {
                     text: "I want to create a promotional webpage based on the information I'll provide. " +
                         "You must return to me the HTML code in string format. " +
                         "give me only code! nothing else!" +
-                        `The website should be in this Hex color code: ${designDetails.colors.map((color) => color)} colors. `+
-                        "The website should be very visually appealing,prestigious and innovative,and show should be a promotional website that has strong marketing language and convinces the website visitor to use our service." +
+                        " do not write instructions for the site owner like 'Here you would add images and descriptions' and'Insert Property Details Here' within the user-visible code!!."+
+                        "If you are missing information, make it up yourself"+
+                        "The website should be responsive and Neatly designed."+
+                        `The website should be in this Hex color code: ${designDetails.colors.map((color) => color)} colors. ` +
+                        "Please use diffferent special fonts and interesting designs." +
+                        "The website should have a big margin on both sides and be very visually appealing,prestigious and innovative,and show should be a promotional website that has strong marketing language and convinces the website visitor to use our service." +
                         "Include the following ,making sure everything is customized to the details I am provide:" +
 
                         // "A company name that you think goes well with the business" +
@@ -49,7 +60,7 @@ export async function getWebPage(req, res) {
                                 case 'Footer':
                                     return footer;
                             }
-                        })} `+
+                        })} ` +
                         "I'll provide you the relevant information. Ok? "
                 }],
             },
@@ -59,17 +70,36 @@ export async function getWebPage(req, res) {
             },
         ],
     });
-    console.log(designDetails);
-    let htmlResult = await chat.sendMessage(`my business information: name: ${designDetails.name} email: ${designDetails.email} companyType: ${designDetails.companyType} description: ${designDetails.description} purpose: ${designDetails.purpose} about: ${designDetails.about}.`);
-    console.log(htmlResult.response.text());
+    let htmlResult = await chat.sendMessage(`my business information:
+        name: ${designDetails.name}
+        email: ${designDetails.email}
+        companyType: ${designDetails.companyType}
+        description: ${designDetails.description}
+        purpose: ${designDetails.purpose}
+        about: ${designDetails.about}.`);
+    let htmlText = htmlResult.response.text();
+    let html = htmlText.slice(htmlText.indexOf("html") + 4, -4);
 
-    // let cssResult = await chat.sendMessage('can you give me css code for the style of my website?' +
-    //     `The website should be in this Hex color code: ${designDetails.colors.map((color) => color)} colors. ` +
-    //     'make sure to include only css and nothing else'
-    // );
-    //console.log(cssResult.response.text());
-   
-    fs.writeFileSync('C:/Users/The user/AI_project/backend/html/landingPage.html',htmlResult.response.text());
+    fs.writeFileSync('./html/landingPage.html', html);
+    res.download('./html/landingPage.html', 'webPAge.html')
+
+    const domain = 'mywebsiteforall.com';
+    const url = `https://rdap.verisign.com/com/v1/domain/${domain}`;
+    try {
+        const response = await fetch(url);
+        console.log("////////////////////////////////////\n" + response.status + "\n/////////////////////////////////");
+        if (response.status === 200) {
+            console.log(`Domain "${domain}" is taken.`);
+        } else {
+            console.log(`Domain "${domain}" might be available.`);
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            console.log(`Domain "${domain}" is available.`);
+        } else {
+            console.error(`Error checking domain:`, error.message);
+        }
+    }
 }
 
 
