@@ -14,14 +14,14 @@ export async function createCharacterizationFile(req, res) {
                 {
                     role: "user",
                     parts: [{
-                        text: "I want to open a new business. " +
-                            "I want to give you category, my business idea, the purpose of the business and a description, " +
-                            "and I want you to return to me a Business characterization document." +
-                            "Return me the document in a json format, " +
-                            "One key should be the title, then sub-title then content, and then the next sub-title and content ext." +
-                            //"For example: {title:'<document's title>', sub-title:'<first subTitle>', content:'<first paragraph content>',subTitle:'<second sub-title>', content:'<second paragraph content>'} ext."+
-                            "The json should have also a key of name- that you offer, and shouldnt include a logo." +
-                            "Manage with the information I give you dont ask questions and dont send eny thing else exept for the json. Ok?"
+                        text: `I want to open a new business. 
+              I want to give you category, my business idea, the purpose of the business and a description, 
+              and I want you to return to me a Business characterization document.
+              Return me the document in this json format, 
+              The keys should be: 'title', 'subTitle1', 'sectionHeading1', 'text1', 'sectionHeading2','text2', 'subTitle2','sectionHeading3', 'text3'. ext.
+              And values should be their content.
+              Manage with the information I give you dont ask questions and dont send eny thing else exept for the json. Ok?`
+
                     }],
                 },
                 {
@@ -32,7 +32,7 @@ export async function createCharacterizationFile(req, res) {
         });
 
         // שליחת המידע לג'מיני
-    const resText = await chat.sendMessage(`My business information: 
+        const resText = await chat.sendMessage(`My business information: 
       Name: ${businessDetails.name}, 
       Email: ${businessDetails.email}, 
       Company Type: ${businessDetails.companyType}, 
@@ -43,8 +43,8 @@ export async function createCharacterizationFile(req, res) {
 
         // קבלת טקסט ותוכן לוגו
         const characterizationText = resText.response.text();
-        const objectString = characterizationText.slice(characterizationText.indexOf("json") + 4, -4);
-        const pdfObject= JSON.parse(objectString.substring(objectString.indexOf('{'), objectString.lastIndexOf('}') + 1))
+        console.log(characterizationText)
+        const pdfObject = JSON.parse(characterizationText.substring(characterizationText.indexOf('{'), characterizationText.lastIndexOf('}') + 1))
         console.log(pdfObject)
         const resLogo = await chat.sendMessage("Give me a logo for my company in a img format.");
 
@@ -53,16 +53,35 @@ export async function createCharacterizationFile(req, res) {
         const pdfPath = 'example.pdf';
         const writeStream = fs.createWriteStream(pdfPath);
         doc.pipe(writeStream);
-
         // כתיבת תוכן למסמך PDF
-        doc
-            .fontSize(20)
-            .text('Business Characterization Document', { align: 'center', underline: true, })
-            .moveDown()
-            .fontSize(20)
-            .text('Business Characterization Document', { align: 'center' })
-            .fontSize(12)
-            .text(characterizationText.name, { align: 'left' })
+        for (const property in pdfObject) {
+            if (property == "title") {
+                doc
+                    .fontSize(18)
+                    .text(pdfObject[property], { align: 'center', underline: true,stroke:true })
+                    .moveDown()
+            }
+            else if (property.includes("subTitle")) {
+                doc
+                    .fontSize(14)
+                    .text(pdfObject[property], { align: 'left', underline: true, })
+                    .moveDown(0.7)
+            }
+            else if (property.includes("sectionHeading")) {
+                doc
+                    .fontSize(12)
+                    .text(`${pdfObject[property]}:`, { align: 'left' })
+                    .moveDown(0.5)
+            }
+            else {
+                doc
+                    .fontSize(11)
+                    .text(pdfObject[property], { align: 'left' })
+                    .moveDown()
+            }
+        }
+
+
         doc.end();
 
         // שליחת המסמך ללקוח

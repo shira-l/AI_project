@@ -12,11 +12,11 @@ import download from "downloadjs";
 
 
 export default function Form() {
-  const [selectedNodeKey, setSelectedNodeKey] = useState('type of business');
+  const [selectedNodeKey, setSelectedNodeKey] = useState();
   const [displayButtons, setDisplayButtons] = useState(false)
   const [displayWebCreation, setDisplayWebCreation] = useState(false);
   const [businessDetails, setBusinessDetails] = useState({});
-  const [isLoad, setIsLoad] = useState(false)
+  const [isSend, setIsSend] = useState(true)
   const [blob, setBlob] = useState(null)
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
@@ -37,12 +37,13 @@ export default function Form() {
     "Guesthouse",
     "Real Estate Company",
     "Delivery",
-    "Startup"
+    "Startup",
+    "Other"
   ]
 
   const generateCharacterizationFile = async (details) => {
     try {
-      setIsLoad(true)
+      setIsSend(false)
       setBusinessDetails(details)
       const response = await fetch('http://localhost:3001/createCharacterizationFile', {
         method: 'POST',
@@ -54,7 +55,7 @@ export default function Form() {
 
       const pdfBlob = await response.blob();
       setBlob(pdfBlob);
-      setIsLoad(false)
+      setIsSend(true)
       setDisplayButtons(true);
       if (!response.ok) {
         console.error(response.error);
@@ -94,20 +95,22 @@ export default function Form() {
     <br />
 
     <FormControl sx={{ m: 1, minWidth: 300 }}>
-      <InputLabel id="demo-simple-select-required-label">{selectedNodeKey}</InputLabel>
+      <InputLabel id="demo-simple-select-required-label">Type of business</InputLabel>
       <Select
         labelId="demo-simple-select-required-label"
         id="demo-simple-select-required"
-        onChange={(e) => { setSelectedNodeKey(e.target.value) }}
-        label={selectedNodeKey}
-        {...register("companyType", { required: "required" })}
+        onChange={(e) => { setSelectedNodeKey(e.target.value); console.log(e.target.value) }}
+        label="Type of business"
       >
         <MenuItem value="">
-          <em>{selectedNodeKey}</em>
+          <em>Type of business</em>
         </MenuItem>
         {optionsOfCompaniesTypes.map((el, i) => (<MenuItem key={i} value={el}>{el}
         </MenuItem>))}
       </Select>
+      {selectedNodeKey == "Other" && <TextField name="companyType"
+        type="text" variant="standard"
+        {...register("companyType", { required: "required" })} />}
       <FormHelperText>{errors[selectedNodeKey] ? errors[selectedNodeKey].message : ''}</FormHelperText>
     </FormControl>
 
@@ -123,10 +126,10 @@ export default function Form() {
         rows={7}
         {...register("about")} />
     </div>
-    {isLoad ? <span>Loading...</span> : <button type='submit'>Send</button>}
+    {isSend ? <button type='submit'>Send</button> : <span>Loading...</span>}
     {displayButtons && <div>
       <button onClick={() => download(blob, "SpecificationFile.pdf")}>download PDF</button>
-      <button onClick={() => { setDisplayWebCreation(!displayWebCreation) }}>create website home page for your business</button>
+      <button onClick={() => { setDisplayWebCreation(!displayWebCreation) }}>create web page</button>
     </div>}
     {displayWebCreation && <WebCreation businessDetails={businessDetails} />}
   </form>)

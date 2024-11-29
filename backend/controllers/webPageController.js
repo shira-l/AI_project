@@ -30,8 +30,12 @@ export async function getWebPage(req, res) {
                     text: "I want to create a promotional webpage based on the information I'll provide. " +
                         "You must return to me the HTML code in string format. " +
                         "give me only code! nothing else!" +
+                        " do not write instructions for the site owner like 'Here you would add images and descriptions' and'Insert Property Details Here' within the user-visible code!!."+
+                        "If you are missing information, make it up yourself"+
+                        "The website should be responsive and Neatly designed."+
                         `The website should be in this Hex color code: ${designDetails.colors.map((color) => color)} colors. ` +
-                        "The website should be very visually appealing,prestigious and innovative,and show should be a promotional website that has strong marketing language and convinces the website visitor to use our service." +
+                        "Please use diffferent special fonts and interesting designs." +
+                        "The website should have a big margin on both sides and be very visually appealing,prestigious and innovative,and show should be a promotional website that has strong marketing language and convinces the website visitor to use our service." +
                         "Include the following ,making sure everything is customized to the details I am provide:" +
 
                         // "A company name that you think goes well with the business" +
@@ -75,8 +79,9 @@ export async function getWebPage(req, res) {
         about: ${designDetails.about}.`);
     let htmlText = htmlResult.response.text();
     let html = htmlText.slice(htmlText.indexOf("html") + 4, -4);
-    console.log(html);
+    
     fs.writeFileSync('C:/Users/The user/AI_project/backend/html/landingPage.html', html);
+    res.download('C:/Users/The user/AI_project/backend/html/landingPage.html', 'webPAge.html')
 }
 
 
