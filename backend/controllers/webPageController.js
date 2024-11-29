@@ -79,9 +79,27 @@ export async function getWebPage(req, res) {
         about: ${designDetails.about}.`);
     let htmlText = htmlResult.response.text();
     let html = htmlText.slice(htmlText.indexOf("html") + 4, -4);
-    
-    fs.writeFileSync('C:/Users/The user/AI_project/backend/html/landingPage.html', html);
-    res.download('C:/Users/The user/AI_project/backend/html/landingPage.html', 'webPAge.html')
+
+    fs.writeFileSync('./html/landingPage.html', html);
+    res.download('./html/landingPage.html', 'webPAge.html')
+
+    const domain = 'mywebsiteforall.com';
+    const url = `https://rdap.verisign.com/com/v1/domain/${domain}`;
+    try {
+        const response = await fetch(url);
+        console.log("////////////////////////////////////\n" + response.status + "\n/////////////////////////////////");
+        if (response.status === 200) {
+            console.log(`Domain "${domain}" is taken.`);
+        } else {
+            console.log(`Domain "${domain}" might be available.`);
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            console.log(`Domain "${domain}" is available.`);
+        } else {
+            console.error(`Error checking domain:`, error.message);
+        }
+    }
 }
 
 

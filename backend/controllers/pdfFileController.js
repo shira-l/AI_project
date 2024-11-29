@@ -45,8 +45,27 @@ export async function createCharacterizationFile(req, res) {
         const characterizationText = resText.response.text();
         console.log(characterizationText)
         const pdfObject = JSON.parse(characterizationText.substring(characterizationText.indexOf('{'), characterizationText.lastIndexOf('}') + 1))
-        console.log(pdfObject)
-        const resLogo = await chat.sendMessage("Give me a logo for my company in a img format.");
+        console.log(pdfObject);
+
+        const resName = await chat.sendMessage("Give me a name for my company. Give me only a name, nothing else");
+        console.log(resName.response.text());
+        let name = resName.response.text();
+        name=name.replaceAll(' ', '');
+        let com = '.com';
+        const domain = name.concat(com);
+        const url = `https://rdap.verisign.com/com/v1/domain/${domain}`;
+        try {
+            const response = await fetch(url);
+            if (response.status === 200)
+                console.log(`Domain "${domain}" is taken.`);
+            else
+                console.log(`Domain "${domain}" might be available.`);
+        } catch (error) {
+            if (error.response && error.response.status === 404)
+                console.log(`Domain "${domain}" is available.`);
+            else
+                console.error(`Error checking domain:`, error.message);
+        }
 
         // יצירת מסמך PDF
         const doc = new PDFDocument();
@@ -58,7 +77,7 @@ export async function createCharacterizationFile(req, res) {
             if (property == "title") {
                 doc
                     .fontSize(18)
-                    .text(pdfObject[property], { align: 'center', underline: true,stroke:true })
+                    .text(pdfObject[property], { align: 'center', underline: true, stroke: true })
                     .moveDown()
             }
             else if (property.includes("subTitle")) {
