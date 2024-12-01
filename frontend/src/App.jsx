@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import React from 'react'
-import Entry from './components/entry'
+import Entry from './components/Entry'
 import './App.css'
 
 function App() {
   return (
     <>
-      {/* <Form/> */}
-      <Entry/>
+      <Entry />
     </>
   )
 }

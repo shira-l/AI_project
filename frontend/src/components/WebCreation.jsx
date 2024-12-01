@@ -39,8 +39,8 @@ export default function WebCreation(props) {
         };
     }
 
-    const removeColor=()=>{
-        let updateColors=selectedColors.pop()
+    const removeColor = () => {
+        let updateColors = selectedColors.pop()
         selectedColors(updateColors)
     }
     const handleChangeSections = (event) => {
@@ -56,10 +56,10 @@ export default function WebCreation(props) {
                 onChange={(updatedColor) => setColor(updatedColor.hex)}
             />
             <button onClick={() => { setSelectedColors(colors => [...colors, color]) }}>Add Color</button>
-            <div style={{ height: "auto" }}>
-                <span>Your colors: </span>
-                {selectedColors.map(color => (<span style={{ width: "20px", height: "10px", backgroundColor: ` ${color}`, marginRight: "7px" ,padding:"2px"}}>{color}</span>))}
-                {selectedColors.length && <IconButton aria-label="delete" onClick={removeColor} >
+            <div style={{ height: "auto", display: "flex", alignItems: "center" }}>
+                <span>Your colors:</span>
+                {selectedColors.map(color => (<span style={{ width: "30px", height: "20px", backgroundColor: ` ${color}`, marginRight: "7px", borderRadius: "10px" }}></span>))}
+                {selectedColors.length && <IconButton aria-label="delete" onClick={removeColor} style={{margin:"0px"}}>
                     <DeleteIcon />
                 </IconButton>}</div>
         </div>
