@@ -1,13 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from 'fs'
 export async function getWebPage(req, res) {
-    //     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-    //     const url = 'https://markerapi.com/api/v2/trademarks/trademark/bamba/status/active/start/1/username/Test123/password/MWJm4rTdCp';
-    //     const agent = new https.Agent({ rejectUnauthorized: false })
-    //     setGlobalDispatcher(new Agent({ connect: { timeout: 60_000 } }))
-    //     const response = await fetch(url, { agent });
-    //     const jsonResponse = await response.json();
-    //     console.log(jsonResponse);
     const designDetails = req.body;
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -71,6 +64,7 @@ export async function getWebPage(req, res) {
         ],
     });
     let htmlResult = await chat.sendMessage(`my business information:
+        companyName: ${designDetails.companyName}
         name: ${designDetails.name}
         email: ${designDetails.email}
         companyType: ${designDetails.companyType}
