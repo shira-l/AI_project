@@ -13,12 +13,11 @@ import download from "downloadjs";
 
 export default function Form() {
   const [selectedNodeKey, setSelectedNodeKey] = useState();
-  const [displayButtons, setDisplayButtons] = useState(false)
+  const [displayForm, setDisplayForm] = useState(true)
   const [displayWebCreation, setDisplayWebCreation] = useState(false);
   const [businessDetails, setBusinessDetails] = useState({});
   const [isSend, setIsSend] = useState(true)
   const [blob, setBlob] = useState(null)
-  const [name, setName] = useState(null);
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       name: '',
@@ -55,9 +54,10 @@ export default function Form() {
       });
 
       const pdfBlob = await response.blob();
+      console.log(pdfBlob)
       setBlob(pdfBlob);
       setIsSend(true)
-      setDisplayButtons(true);
+      setDisplayForm(false);
       if (!response.ok) {
         console.error(response.error);
       }
@@ -68,7 +68,7 @@ export default function Form() {
 
   return (<form onSubmit={handleSubmit(generateCharacterizationFile)}>
 
-    <FormControl sx={{ m: 1, width: '22ch' }} variant="standard">
+    {displayForm? <><FormControl sx={{ m: 1, width: '22ch' }} variant="standard">
       <TextField name="name"
         label="name" type="text" variant="standard"
         {...register("name", {
@@ -127,9 +127,10 @@ export default function Form() {
         rows={7}
         {...register("about")} />
     </div>
-    <p>Your new business- <b>{name}</b> starts now!</p>
     {isSend ? <button type='submit'>Send</button> : <span>Loading...</span>}
-    {displayButtons && <div>
+   </>
+   : <div>
+    <button onClick={()=>setDisplayForm(false)}>resend</button>
       <button onClick={() => download(blob, "SpecificationFile.pdf")}>download PDF</button>
       <button onClick={() => { setDisplayWebCreation(!displayWebCreation) }}>create web page</button>
     </div>}

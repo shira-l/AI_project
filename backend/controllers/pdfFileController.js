@@ -70,7 +70,7 @@ export async function createCharacterizationFile(req, res) {
 
         // יצירת מסמך PDF
         const doc = new PDFDocument();
-        const pdfPath = 'example.pdf';
+        const pdfPath = `example.pdf`;
         const writeStream = fs.createWriteStream(pdfPath);
         doc.pipe(writeStream);
         // כתיבת תוכן למסמך PDF
@@ -101,15 +101,11 @@ export async function createCharacterizationFile(req, res) {
             }
         }
 
-
         doc.end();
         // res.setHeader("content-disposition", contentDisposition(`${companyName}.pdf`));
         // שליחת המסמך ללקוח
         writeStream.on('finish', () => {
             writeStream.close();
-            console.log(companyName);
-
-            res.set('Content-Disposition', 'attachment; filename=example.pdf');
             res.download(pdfPath, `${companyName}.pdf`, (err) => {
                 if (err) {
                     console.error('Error sending file:', err);

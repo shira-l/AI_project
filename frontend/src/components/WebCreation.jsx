@@ -12,7 +12,9 @@ export default function WebCreation(props) {
     const [color, setColor] = useState();
     const [blob, setBlob] = useState()
     const [isCreate, setISCreate] = useState(false)
+    const [isLoad,setIsLoad]=useState(false)
     const creatWebPage = async () => {
+        setIsLoad(true)
         const body = {
             ...businessDetails,
             colors: selectedColors,
@@ -28,6 +30,7 @@ export default function WebCreation(props) {
             });
             const htmlBlob = await response.blob();
             setBlob(htmlBlob);
+            setIsLoad(false)
             setISCreate(true)
             if (!response.ok) {
                 console.error(response.error);
@@ -56,15 +59,15 @@ export default function WebCreation(props) {
                 onChange={(updatedColor) => setColor(updatedColor.hex)}
             />
             <button onClick={() => { setSelectedColors(colors => [...colors, color]) }}>Add Color</button>
-            <div style={{ height: "auto", display: "flex", alignItems: "center" }}>
+            <div style={{ height: "auto", display: "flex", alignItems:"flex-end" }}>
                 <span>Your colors:</span>
                 {selectedColors.map(color => (<span style={{ width: "30px", height: "20px", backgroundColor: ` ${color}`, marginRight: "7px", borderRadius: "10px" }}></span>))}
-                {selectedColors.length && <IconButton aria-label="delete" onClick={removeColor} style={{margin:"0px"}}>
+                {selectedColors.length && <IconButton aria-label="delete" onClick={removeColor} style={{margin:"0px",padding:"0px"}}>
                     <DeleteIcon />
                 </IconButton>}</div>
         </div>
 
-        <button onClick={creatWebPage}>Create</button>
+        {isLoad?<span>Loading...</span>:<button onClick={creatWebPage}>Create</button>}
         {isCreate && <div> <button><a href="http://localhost:3001/landingPage.html"
             target="_blank"> Preview </a></button>
             <button onClick={() => download(blob, "webPage.html")}> download html</button></div>}
