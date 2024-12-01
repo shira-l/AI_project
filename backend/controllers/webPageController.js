@@ -63,6 +63,7 @@ export async function getWebPage(req, res) {
         ],
     });
     let htmlResult = await chat.sendMessage(`my business information:
+        companyName: ${designDetails.companyName}
         name: ${designDetails.name}
         email: ${designDetails.email}
         companyType: ${designDetails.companyType}

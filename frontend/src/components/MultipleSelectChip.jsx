@@ -29,7 +29,6 @@ const sections = [
     "Powerful calls to action",
     "Benefits",
     "Contact information",
-    "Social proof",
     "Footer"
 ];
 

@@ -18,6 +18,7 @@ export default function Form() {
   const [businessDetails, setBusinessDetails] = useState({});
   const [isSend, setIsSend] = useState(true)
   const [blob, setBlob] = useState(null)
+  const [name, setName] = useState(null);
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       name: '',
@@ -126,6 +127,7 @@ export default function Form() {
         rows={7}
         {...register("about")} />
     </div>
+    <p>Your new business- <b>{name}</b> starts now!</p>
     {isSend ? <button type='submit'>Send</button> : <span>Loading...</span>}
     {displayButtons && <div>
       <button onClick={() => download(blob, "SpecificationFile.pdf")}>download PDF</button>
